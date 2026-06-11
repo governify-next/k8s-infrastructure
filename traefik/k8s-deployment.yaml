@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scope-manager-node
+  namespace: governify-next
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 5701
+      targetPort: 5701
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: scope-manager-node
+  namespace: governify-next
+  labels:
+    kubernetes.io/service-name: scope-manager-node
+addressType: IPv4
+endpoints:
+  - addresses:
+      - 149.202.72.15
+ports:
+  - name: http
+    port: 5701
+    protocol: TCP
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: governify-next-k8s
+  namespace: governify-next
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`scope-manager.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: governify-scope-manager
+          port: 5801
+    - match: Host(`registry.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: governify-registry
+          port: 5802
+    - match: Host(`computer.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: governify-computer
+          port: 5803
+    - match: Host(`collector.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: governify-collector
+          port: 5804
+    - match: Host(`reporter.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: governify-reporter
+          port: 5805
+    - match: Host(`director.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: governify-director
+          port: 5806
+    - match: Host(`grafana.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: governify-grafana
+          port: 3000
+    - match: Host(`dashboard.k8s.next.governify.io`)
+      kind: Rule
+      services:
+        - name: headlamp
+          namespace: kube-system
+          port: 4466
+    - match: Host(`scope-manager.node.next.governify.io`)
+      kind: Rule
+      services:
+        - name: scope-manager-node
+          port: 5701
+  tls:
+    certResolver: default
+    domains:
+      - main: scope-manager.k8s.next.governify.io
+      - main: registry.k8s.next.governify.io
+      - main: computer.k8s.next.governify.io
+      - main: collector.k8s.next.governify.io
+      - main: reporter.k8s.next.governify.io
+      - main: director.k8s.next.governify.io
+      - main: grafana.k8s.next.governify.io
+      - main: dashboard.k8s.next.governify.io
+      - main: scope-manager.node.next.governify.io

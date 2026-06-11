@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: governify-computer
+  namespace: governify-next
+spec:
+  selector:
+    app: governify-computer
+  ports:
+    - protocol: TCP
+      port: 5803
+      targetPort: 5803

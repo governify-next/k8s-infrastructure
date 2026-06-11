@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: governify-scope-manager
+  name: governify-scope-manager
+  namespace: governify-next
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: governify-scope-manager
+  template:
+    metadata:
+      labels:
+        app: governify-scope-manager
+    spec:
+      containers:
+        - env:
+            - name: NODE_ENV
+              value: development
+            - name: GOV_LOG_LEVEL
+              value: INFO
+            - name: PORT
+              value: "5801"
+            - name: GOV_SERVICE_NAME
+              value: "scope-manager"
+            - name: MONGO_URI
+              value: "mongodb://governify-mongo:27017/governify"
+            - name: SERVICE_AUTHENTICATION_ENABLED
+              value: "false"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: governify-secrets
+                  key: jwt_secret
+            - name: OIDC_ENABLED
+              value: "true"
+            - name: OIDC_ISSUER_URL
+              value: https://accounts.google.com
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: governify-secrets
+                  key: oidc_client_id
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: governify-secrets
+                  key: oidc_client_secret
+            - name: OIDC_REDIRECT_URI
+              value: https://scope-manager.k8s.next.governify.io/api/v1/users/oidc/callback
+            - name: OIDC_SCOPE
+              value: openid email profile
+            - name: MAX_ROLES_PER_ORGANIZATION
+              value: "100"
+            - name: MAX_MEMBERS_PER_ORGANIZATION
+              value: "1000"
+          image: governifynext/scope-manager:develop
+          imagePullPolicy: Always
+          name: governify-scope-manager
+          ports:
+            - containerPort: 5801
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 300Mi
+            limits:
+              cpu: 500m
+              memory: 400Mi

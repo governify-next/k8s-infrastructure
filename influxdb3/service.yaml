@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: governify-influxdb3
+  namespace: governify-next
+spec:
+  selector:
+    app: governify-influxdb3
+  ports:
+    - protocol: TCP
+      port: 8181
+      targetPort: 8181

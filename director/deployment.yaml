@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: governify-director
+  name: governify-director
+  namespace: governify-next
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: governify-director
+  template:
+    metadata:
+      labels:
+        app: governify-director
+    spec:
+      containers:
+        - env:
+            - name: NODE_ENV
+              value: development
+            - name: GOV_LOG_LEVEL
+              value: INFO
+            - name: PORT
+              value: "5806"
+            - name: GOV_SERVICE_NAME
+              value: "director"
+            - name: REGISTRY_SERVICE_URL
+              value: "http://governify-registry:5802"
+            - name: REPORTER_SERVICE_URL
+              value: "http://governify-reporter:5805"
+            - name: MONGO_URI
+              value: "mongodb://governify-mongo:27017/governify"
+            - name: REDIS_URI
+              value: "redis://governify-redis:6379"
+            - name: SERVICE_AUTHENTICATION_ENABLED
+              value: "false"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: governify-secrets
+                  key: jwt_secret
+            - name: WORKER_CONCURRENCY
+              value: "1"
+            - name: QUEUE_CLEANUP_INTERVAL
+              value: "0"
+
+          image: governifynext/director:develop
+          imagePullPolicy: Always
+          name: governify-director
+          ports:
+            - containerPort: 5806
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 300Mi
+            limits:
+              cpu: 500m
+              memory: 400Mi

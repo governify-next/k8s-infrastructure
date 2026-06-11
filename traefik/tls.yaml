@@ -1,0 +1,13 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    additionalArguments:
+      - "--log.level=DEBUG"
+      - "--providers.kubernetescrd.allowCrossNamespace=true"
+      - "--certificatesresolvers.default.acme.tlschallenge"
+      - "--certificatesresolvers.default.acme.email=webmaster@governify.io"
+      - "--certificatesresolvers.default.acme.storage=/data/acme.json"

@@ -1,0 +1,30 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: governify-mongo
+  namespace: governify-next
+  labels:
+    app: governify-mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: governify-mongo
+  template: 
+    metadata:
+      labels:
+        app: governify-mongo
+    spec:
+      containers:
+      - name: governify-mongo
+        image: mongo
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - mountPath: /data/db
+          name: governify-mongo-db-volume
+      volumes:
+        - name: governify-mongo-db-volume
+          persistentVolumeClaim:
+            claimName: governify-mongo

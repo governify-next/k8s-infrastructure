@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: governify-registry
+  name: governify-registry
+  namespace: governify-next
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: governify-registry
+  template:
+    metadata:
+      labels:
+        app: governify-registry
+    spec:
+      containers:
+        - env:
+            - name: NODE_ENV
+              value: development
+            - name: GOV_LOG_LEVEL
+              value: INFO
+            - name: PORT
+              value: "5802"
+            - name: GOV_SERVICE_NAME
+              value: "registry"
+            - name: MONGO_URI
+              value: "mongodb://governify-mongo:27017/governify"
+            - name: SCOPE_MANAGER_SERVICE_URL
+              value: "http://governify-scope-manager:5801"
+            - name: COMPUTER_SERVICE_URL
+              value: "http://governify-computer:5803"
+            - name: COLLECTOR_SERVICE_URL
+              value: "http://governify-collector:5804"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: governify-secrets
+                  key: jwt_secret
+
+          image: governifynext/registry:develop
+          imagePullPolicy: Always
+          name: governify-registry
+          ports:
+            - containerPort: 5802
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 300Mi
+            limits:
+              cpu: 500m
+              memory: 400Mi

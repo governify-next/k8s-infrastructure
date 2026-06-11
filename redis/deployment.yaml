@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: governify-redis
+  namespace: governify-next
+  labels:
+    app: governify-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: governify-redis
+  template:
+    metadata:
+      labels:
+        app: governify-redis
+    spec:
+      containers:
+      - name: governify-redis
+        image: redis
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6379
