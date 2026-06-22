@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: governify-scope-manager
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app.kubernetes.io/name: governify-scope-manager}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: governify-scope-manager
+    spec:
+      containers:
+        - name: scope-manager
+          image: governifynext/scope-manager:develop
+          env:
+            - {name: SERVICE_AUTHENTICATION_ENABLED, value: "true"}
+            - {name: PORT, value: "5801"}
+            - {name: GOV_SERVICE_NAME, value: scope-manager}
+            - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
+            - name: JWT_SECRET
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
+            - {name: OIDC_ENABLED, value: "true"}
+            - {name: OIDC_ISSUER_URL, value: "https://accounts.google.com"}
+            - name: OIDC_CLIENT_ID
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: oidc_client_id}}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: oidc_client_secret}}
+            - {name: OIDC_REDIRECT_URI, value: "https://scope-manager.k8s.next.governify.io/api/v1/users/oidc/callback"}
+            - {name: OIDC_SCOPE, value: "openid email profile"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: governify-scope-manager
+spec:
+  selector: {app.kubernetes.io/name: governify-scope-manager}
+  ports:
+    - {port: 5801}

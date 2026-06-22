@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: governify-mongo
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app.kubernetes.io/name: governify-mongo}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: governify-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:8.0
+          volumeMounts:
+            - {name: data, mountPath: /data/db}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: governify-mongo}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: governify-mongo
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: {storage: 20Gi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: governify-mongo
+spec:
+  selector: {app.kubernetes.io/name: governify-mongo}
+  ports:
+    - {port: 27017}

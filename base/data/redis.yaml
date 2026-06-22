@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: governify-redis
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app.kubernetes.io/name: governify-redis}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: governify-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:8.2
+          args:
+            - redis-server
+            - --appendonly
+            - "yes"
+          volumeMounts:
+            - {name: data, mountPath: /data}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: governify-redis}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: governify-redis
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: {storage: 5Gi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: governify-redis
+spec:
+  selector: {app.kubernetes.io/name: governify-redis}
+  ports:
+    - {port: 6379}

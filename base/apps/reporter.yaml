@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: governify-reporter
+spec:
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: governify-reporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: governify-reporter
+    spec:
+      containers:
+        - name: reporter
+          image: governifynext/reporter:develop
+          env:
+            - {name: SERVICE_AUTHENTICATION_ENABLED, value: "true"}
+            - {name: PORT, value: "5805"}
+            - {name: GOV_SERVICE_NAME, value: reporter}
+            - {name: REGISTRY_SERVICE_URL, value: "http://governify-registry:5802"}
+            - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
+            - name: JWT_SECRET
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
+            - {name: INFLUX_URL, value: "http://governify-influxdb3:8181"}
+            - name: INFLUX_TOKEN
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: influx_token}}
+            - {name: INFLUX_DATABASE, value: governify-next}
+            - {name: GRAFANA_URL, value: "http://governify-grafana:3000"}
+            - {name: GRAFANA_PUBLIC_URL, value: "https://grafana.k8s.next.governify.io"}
+            - name: GRAFANA_USER
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: grafana_user}}
+            - name: GRAFANA_PASSWORD
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: grafana_password}}
+            - {name: GRAFANA_INFLUX_URL, value: "http://governify-influxdb3:8181"}
+            - {name: GRAFANA_DATASOURCE_UID, value: governify-influxdb3}
+            - {name: GRAFANA_DATASOURCE_NAME, value: "Governify InfluxDB 3"}
+            - {name: GRAFANA_FOLDER_UID, value: governify}
+            - {name: GRAFANA_FOLDER_TITLE, value: Governify}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: governify-reporter
+spec:
+  selector: {app.kubernetes.io/name: governify-reporter}
+  ports:
+    - {port: 5805}

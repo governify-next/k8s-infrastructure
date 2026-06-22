@@ -6,8 +6,11 @@ metadata:
 spec:
   valuesContent: |-
     additionalArguments:
-      - "--log.level=DEBUG"
-      - "--providers.kubernetescrd.allowCrossNamespace=true"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--certificatesresolvers.default.acme.tlschallenge"
       - "--certificatesresolvers.default.acme.email=webmaster@governify.io"
       - "--certificatesresolvers.default.acme.storage=/data/acme.json"
+    persistence:
+      enabled: true
+      size: 1Gi
