@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: governify-next
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/governify-next/k8s-infrastructure.git
+    targetRevision: develop
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: governify-next
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

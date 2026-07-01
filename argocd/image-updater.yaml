@@ -1,0 +1,25 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: governify-next
+  namespace: argocd
+spec:
+  writeBackConfig:
+    method: argocd
+  commonUpdateSettings:
+    updateStrategy: digest
+  applicationRefs:
+    - namePattern: governify-next
+      images:
+        - alias: collector
+          imageName: governifynext/collector:develop
+        - alias: computer
+          imageName: governifynext/computer:develop
+        - alias: director
+          imageName: governifynext/director:develop
+        - alias: registry
+          imageName: governifynext/registry:develop
+        - alias: reporter
+          imageName: governifynext/reporter:develop
+        - alias: scopemanager
+          imageName: governifynext/scope-manager:develop

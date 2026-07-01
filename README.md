@@ -143,6 +143,14 @@ kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
+Install Argo CD Image Updater in the same namespace. The default Image Updater
+installation watches its own namespace, which is where the `Application` and
+`ImageUpdater` resources in this repository are created:
+
+```sh
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/config/install.yaml
+```
+
 Create the runtime secrets before the first sync. This keeps secret material out
 of Git while still allowing Argo CD to manage the rest of the deployment.
 For this you will previously need to create the corresponding namespace.
@@ -152,48 +160,21 @@ kubectl create namespace governify-next
 kubectl apply -f secrets.yaml
 ```
 
-Then create an Argo CD `Application` that points to this repository. For the
-default k3s deployment, use `path: .` because the repository root points to the
-k3s overlay:
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: governify-next
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/governify-next/k8s-infrastructure.git
-    targetRevision: main
-    path: .
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: governify-next
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-```
-
-For a standard Kubernetes cluster, use the same `Application` manifest but set
-the source path to the standard overlay:
-
-```yaml
-  source:
-    repoURL: https://github.com/governify-next/k8s-infrastructure.git
-    targetRevision: main
-    path: platform/kubernetes
-```
-
-Apply the `Application` to the Argo CD namespace:
+Then apply the Argo CD bootstrap resources from this repository:
 
 ```sh
-kubectl apply -n argocd -f argocd/governify-next.yaml
+kubectl apply -k argocd
 ```
+
+The checked-in Argo CD `Application` tracks the `develop` branch and uses
+`path: .`, so the default deployment is the k3s overlay. For a standard
+Kubernetes cluster, change `spec.source.path` in `argocd/governify-next.yaml`
+to `platform/kubernetes` before applying it.
+
+The checked-in `ImageUpdater` tracks the six Governify service images that use
+the `develop` tag. It uses the `digest` strategy so a new image pushed to the
+same mutable tag causes Argo CD to deploy the new image digest without requiring
+manual Kubernetes YAML edits for each commit.
 
 To access the Argo CD UI locally:
 
