@@ -1,30 +1,85 @@
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: governify-next
 spec:
-  entryPoints: [websecure]
-  routes:
-    - match: Host(`scope-manager.k8s.next.governify.io`)
-      kind: Rule
-      services: [{name: governify-scope-manager, port: 5801}]
-    - match: Host(`registry.k8s.next.governify.io`)
-      kind: Rule
-      services: [{name: governify-registry, port: 5802}]
-    - match: Host(`computer.k8s.next.governify.io`)
-      kind: Rule
-      services: [{name: governify-computer, port: 5803}]
-    - match: Host(`collector.k8s.next.governify.io`)
-      kind: Rule
-      services: [{name: governify-collector, port: 5804}]
-    - match: Host(`reporter.k8s.next.governify.io`)
-      kind: Rule
-      services: [{name: governify-reporter, port: 5805}]
-    - match: Host(`director.k8s.next.governify.io`)
-      kind: Rule
-      services: [{name: governify-director, port: 5806}]
-    - match: Host(`grafana.k8s.next.governify.io`)
-      kind: Rule
-      services: [{name: governify-grafana, port: 3000}]
   tls:
-    certResolver: default
+    - hosts:
+        - scope-manager.k8s.next.governify.io
+        - registry.k8s.next.governify.io
+        - computer.k8s.next.governify.io
+        - collector.k8s.next.governify.io
+        - reporter.k8s.next.governify.io
+        - director.k8s.next.governify.io
+        - grafana.k8s.next.governify.io
+  rules:
+    - host: scope-manager.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-scope-manager
+                port:
+                  number: 5801
+    - host: registry.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-registry
+                port:
+                  number: 5802
+    - host: computer.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-computer
+                port:
+                  number: 5803
+    - host: collector.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-collector
+                port:
+                  number: 5804
+    - host: reporter.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-reporter
+                port:
+                  number: 5805
+    - host: director.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-director
+                port:
+                  number: 5806
+    - host: grafana.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-grafana
+                port:
+                  number: 3000

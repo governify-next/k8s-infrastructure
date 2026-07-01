@@ -1,0 +1,9 @@
+- op: add
+  path: /metadata/annotations
+  value:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: default
+- op: add
+  path: /spec/ingressClassName
+  value: traefik

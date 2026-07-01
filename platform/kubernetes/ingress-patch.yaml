@@ -1,0 +1,3 @@
+- op: add
+  path: /spec/tls/0/secretName
+  value: governify-next-tls

@@ -1,20 +1,24 @@
-# Governify Next on k3s
+# Governify Next on Kubernetes
 
 This repository deploys the Governify Next services, MongoDB, Redis,
-InfluxDB 3, and Grafana to Kubernetes. It is intended for a k3s cluster with
-the bundled Traefik ingress controller enabled.
+InfluxDB 3, and Grafana to Kubernetes. The default deployment target is a k3s
+cluster with the bundled Traefik ingress controller enabled, but the manifests
+also include a standard Kubernetes overlay that uses native `Ingress`.
 
-The base configuration is production-oriented but uses k3s's default
-`local-path` storage, which is best suited for a single-node installation, but
-the persistent data will not survive failure of that node.
+The default k3s path uses k3s's `local-path` storage, which is best suited for
+a single-node installation. For a standard Kubernetes cluster, make sure the
+cluster has a default `StorageClass` or patch the PVCs for your storage class.
 
 ## What you need
 
-- A Linux server (or k3s cluster) with Internet access and enough local disk
-  for 85 GiB of persistent-volume requests.
-- A public IP address and DNS records for the service hostnames. Let’s Encrypt
-  must be able to reach the cluster on TCP 443; HTTP traffic on TCP 80 is
-  redirected to HTTPS.
+- A Linux server, k3s cluster, or Kubernetes cluster with Internet access and
+  enough persistent storage for 85 GiB of persistent-volume requests.
+- A public IP address and DNS records for the service hostnames.
+- For k3s: the bundled Traefik ingress controller enabled. Let’s Encrypt must
+  be able to reach the cluster on TCP 443; HTTP traffic on TCP 80 is redirected
+  to HTTPS by the Traefik configuration in this repository.
+- For standard Kubernetes: an ingress controller and a TLS certificate secret,
+  or an equivalent certificate-management setup, for the configured hostnames.
 - `kubectl` configured to access the cluster. The commands below assume it is
   run by a cluster administrator.
 - Credentials for the Google OpenID Connect application used by Scope Manager.
@@ -47,10 +51,9 @@ The checked-in configuration uses these hostnames:
 | Director | `https://director.k8s.next.governify.io` |
 | Grafana | `https://grafana.k8s.next.governify.io` |
 
-Create A/AAAA records for every hostname above, pointing to the Traefik
-entrypoint (normally the k3s server's public address). If using another domain,
-replace the host rules in `base/ingress.yaml` and update these related public
-URLs before deployment:
+Create A/AAAA records for every hostname above, pointing to the ingress
+controller entrypoint. If using another domain, replace the host rules in
+`base/ingress.yaml` and update these related public URLs before deployment:
 
 - `OIDC_REDIRECT_URI` in `base/apps/scope-manager.yaml`
 - `GRAFANA_PUBLIC_URL` in `base/apps/reporter.yaml`
@@ -85,7 +88,7 @@ Important details:
 - Keep `secrets.yaml` private. It is ignored by Git; use a secret manager or
   sealed-secret workflow if your deployment process requires GitOps.
 
-## 4. Deploy
+## 4. Deploy to k3s
 
 Run these commands from the repository root after DNS is in place. Creating the
 namespace first lets the Secret be applied before workloads are created. The
@@ -95,6 +98,105 @@ persistent ACME state.
 ```sh
 kubectl apply -f base/core.yaml
 kubectl apply -f secrets.yaml
-kubectl apply -f platform/k3s/traefik.yaml
-kubectl apply -k base
+kubectl apply -k .
 ```
+
+The repository root points to the k3s overlay by default.
+
+## 5. Deploy to standard Kubernetes
+
+Use this path for clusters that provide a standard ingress controller instead
+of k3s's bundled Traefik installation.
+
+Before applying the overlay, either create a TLS secret named
+`governify-next-tls` in the `governify-next` namespace or adapt
+`platform/kubernetes/ingress-patch.yaml` to your certificate manager. If your
+ingress controller is not the cluster default, add `spec.ingressClassName` with
+an overlay patch.
+
+```sh
+kubectl apply -f base/core.yaml
+kubectl apply -f secrets.yaml
+kubectl apply -k platform/kubernetes
+```
+
+## 6. Deploy with Argo CD
+
+Use this path when the cluster should continuously reconcile the manifests from
+the Git repository instead of relying on repeated local `kubectl apply`
+commands. The repository is hosted at
+[`governify-next/k8s-infrastructure`](https://github.com/governify-next/k8s-infrastructure).
+
+Install Argo CD in the cluster:
+
+```sh
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+Create the runtime secrets before the first sync. This keeps secret material out
+of Git while still allowing Argo CD to manage the rest of the deployment:
+
+```sh
+kubectl apply -f secrets.yaml
+```
+
+Then create an Argo CD `Application` that points to this repository. For the
+default k3s deployment, use `path: .` because the repository root points to the
+k3s overlay:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: governify-next
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/governify-next/k8s-infrastructure.git
+    targetRevision: main
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: governify-next
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+```
+
+For a standard Kubernetes cluster, use the same `Application` manifest but set
+the source path to the standard overlay:
+
+```yaml
+  source:
+    repoURL: https://github.com/governify-next/k8s-infrastructure.git
+    targetRevision: main
+    path: platform/kubernetes
+```
+
+Apply the `Application` to the Argo CD namespace:
+
+```sh
+kubectl apply -n argocd -f argocd/governify-next.yaml
+```
+
+To access the Argo CD UI locally:
+
+```sh
+kubectl -n argocd port-forward svc/argocd-server 8080:443
+```
+
+Then open `https://localhost:8080`. The initial admin password can be read from
+the bootstrap secret:
+
+```sh
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+```
+
+For a fully GitOps-managed production setup, replace the manually applied
+`secrets.yaml` step with a sealed-secret, SOPS, or external-secret workflow and
+commit only encrypted or external secret references.
