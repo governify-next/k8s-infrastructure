@@ -24,7 +24,7 @@ cluster has a default `StorageClass` or patch the PVCs for your storage class.
 - Credentials for the Google OpenID Connect application used by Scope Manager.
   Its redirect URI must match the configured public hostname.
 
-The images currently use the `develop` tag. Pin image tags in `base/apps/` to
+The images currently use the `develop` tag. Pin image tags in `base/services/` to
 an immutable release before a production deployment.
 
 ## 1. Create a k3s cluster
@@ -50,14 +50,23 @@ The checked-in configuration uses these hostnames:
 | Reporter | `https://reporter.k8s.next.governify.io` |
 | Director | `https://director.k8s.next.governify.io` |
 | Grafana | `https://grafana.k8s.next.governify.io` |
+| Kubernetes Dashboard | `https://dashboard.k8s.next.governify.io` |
 
 Create A/AAAA records for every hostname above, pointing to the ingress
 controller entrypoint. If using another domain, replace the host rules in
 `base/ingress.yaml` and update these related public URLs before deployment:
 
-- `OIDC_REDIRECT_URI` in `base/apps/scope-manager.yaml`
-- `GRAFANA_PUBLIC_URL` in `base/apps/reporter.yaml`
-- `GF_SERVER_ROOT_URL` in `base/data/grafana.yaml`
+- `OIDC_REDIRECT_URI` in `base/services/scope-manager.yaml`
+- `GRAFANA_PUBLIC_URL` in `base/services/reporter.yaml`
+- `GF_SERVER_ROOT_URL` in `base/infra/grafana.yaml`
+
+Headlamp is exposed as the Kubernetes dashboard. It creates a
+`governify-headlamp-admin` service account bound to `cluster-admin` for
+dashboard login. After deployment, read its token with:
+
+```sh
+kubectl -n governify-next get secret governify-headlamp-admin-token
+```
 
 Register the resulting Scope Manager redirect URI with the OIDC provider. The
 current manifest uses Google as its issuer (`https://accounts.google.com`).
@@ -135,9 +144,11 @@ kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubuse
 ```
 
 Create the runtime secrets before the first sync. This keeps secret material out
-of Git while still allowing Argo CD to manage the rest of the deployment:
+of Git while still allowing Argo CD to manage the rest of the deployment.
+For this you will previously need to create the corresponding namespace.
 
 ```sh
+kubectl create namespace governify-next
 kubectl apply -f secrets.yaml
 ```
 
@@ -194,7 +205,7 @@ Then open `https://localhost:8080`. The initial admin password can be read from
 the bootstrap secret:
 
 ```sh
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+kubectl -n argocd get secret argocd-initial-admin-secret
 ```
 
 For a fully GitOps-managed production setup, replace the manually applied
