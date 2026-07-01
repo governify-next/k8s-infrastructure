@@ -65,7 +65,7 @@ Headlamp is exposed as the Kubernetes dashboard. It creates a
 dashboard login. After deployment, read its token with:
 
 ```sh
-kubectl -n governify-next get secret governify-headlamp-admin-token
+kubectl -n governify-next get secret governify-headlamp-admin-token -o jsonpath='{.data.token}' | base64 -d
 ```
 
 Register the resulting Scope Manager redirect URI with the OIDC provider. The
@@ -186,7 +186,7 @@ Then open `https://localhost:8080`. The initial admin password can be read from
 the bootstrap secret:
 
 ```sh
-kubectl -n argocd get secret argocd-initial-admin-secret
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
 ```
 
 For a fully GitOps-managed production setup, replace the manually applied
