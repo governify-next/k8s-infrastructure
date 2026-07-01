@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/governify-next/k8s-infrastructure.git
-    targetRevision: develop
+    targetRevision: main
     path: .
   destination:
     server: https://kubernetes.default.svc
