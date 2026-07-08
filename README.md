@@ -50,7 +50,7 @@ The checked-in configuration uses these hostnames:
 | Reporter | `https://reporter.k8s.next.governify.io` |
 | Director | `https://director.k8s.next.governify.io` |
 | Grafana | `https://grafana.k8s.next.governify.io` |
-| Kubernetes Dashboard | `https://dashboard.k8s.next.governify.io` |
+| Kubernetes Dashboard | `https://headlamp.k8s.next.governify.io` |
 
 Create A/AAAA records for every hostname above, pointing to the ingress
 controller entrypoint. If using another domain, replace the host rules in

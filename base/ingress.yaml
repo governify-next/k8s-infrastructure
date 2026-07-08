@@ -12,7 +12,7 @@ spec:
         - reporter.k8s.next.governify.io
         - director.k8s.next.governify.io
         - grafana.k8s.next.governify.io
-        - dashboard.k8s.next.governify.io
+        - headlamp.k8s.next.governify.io
   rules:
     - host: scope-manager.k8s.next.governify.io
       http:
@@ -84,7 +84,7 @@ spec:
                 name: governify-grafana
                 port:
                   number: 3000
-    - host: dashboard.k8s.next.governify.io
+    - host: headlamp.k8s.next.governify.io
       http:
         paths:
           - path: /
