@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: governify-join-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: governify-join-frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: governify-join-frontend
+    spec:
+      containers:
+        - name: join-frontend
+          image: governifynext/join-frontend:develop
+          env:
+            - {name: PORT, value: "3000"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: governify-join-frontend
+spec:
+  selector:
+    app.kubernetes.io/name: governify-join-frontend
+  ports:
+    - {port: 3000}

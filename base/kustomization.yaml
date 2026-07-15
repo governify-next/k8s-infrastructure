@@ -9,6 +9,8 @@ resources:
   - services/registry.yaml
   - services/reporter.yaml
   - services/scope-manager.yaml
+  - services/join-backend.yaml
+  - services/join-frontend.yaml
   - infra/mongo.yaml
   - infra/redis.yaml
   - infra/influxdb.yaml

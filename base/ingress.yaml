@@ -11,6 +11,8 @@ spec:
         - collector.k8s.next.governify.io
         - reporter.k8s.next.governify.io
         - director.k8s.next.governify.io
+        - join-backend.k8s.next.governify.io
+        - join.k8s.next.governify.io
         - grafana.k8s.next.governify.io
         - headlamp.k8s.next.governify.io
   rules:
@@ -74,6 +76,26 @@ spec:
                 name: governify-director
                 port:
                   number: 5806
+    - host: join-backend.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-join-backend
+                port:
+                  number: 5807
+    - host: join.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-join-frontend
+                port:
+                  number: 3000
     - host: grafana.k8s.next.governify.io
       http:
         paths:

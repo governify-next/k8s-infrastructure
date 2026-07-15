@@ -23,3 +23,7 @@ spec:
           imageName: governifynext/reporter:develop
         - alias: scopemanager
           imageName: governifynext/scope-manager:develop
+        - alias: joinbackend
+          imageName: governifynext/join-backend:develop
+        - alias: joinfrontend
+          imageName: governifynext/join-frontend:develop

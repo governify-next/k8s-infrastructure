@@ -49,6 +49,8 @@ The checked-in configuration uses these hostnames:
 | Collector | `https://collector.k8s.next.governify.io` |
 | Reporter | `https://reporter.k8s.next.governify.io` |
 | Director | `https://director.k8s.next.governify.io` |
+| Join (backend) | `https://join-backend.k8s.next.governify.io` |
+| Join | `https://join.k8s.next.governify.io` |
 | Grafana | `https://grafana.k8s.next.governify.io` |
 | Kubernetes Dashboard | `https://headlamp.k8s.next.governify.io` |
 
@@ -171,7 +173,7 @@ The checked-in Argo CD `Application` tracks the `develop` branch and uses
 Kubernetes cluster, change `spec.source.path` in `argocd/governify-next.yaml`
 to `platform/kubernetes` before applying it.
 
-The checked-in `ImageUpdater` tracks the six Governify service images that use
+The checked-in `ImageUpdater` tracks the eight Governify service images that use
 the `develop` tag. It uses the `digest` strategy so a new image pushed to the
 same mutable tag causes Argo CD to deploy the new image digest without requiring
 manual Kubernetes YAML edits for each commit.
