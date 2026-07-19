@@ -5,10 +5,11 @@ metadata:
 spec:
   tls:
     - hosts:
+        - authenticator.k8s.next.governify.io
         - scope-manager.k8s.next.governify.io
         - registry.k8s.next.governify.io
         - computer.k8s.next.governify.io
-        - collector.k8s.next.governify.io
+        - fetcher.k8s.next.governify.io
         - reporter.k8s.next.governify.io
         - director.k8s.next.governify.io
         - join-backend.k8s.next.governify.io
@@ -16,6 +17,16 @@ spec:
         - grafana.k8s.next.governify.io
         - headlamp.k8s.next.governify.io
   rules:
+    - host: authenticator.k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-authenticator
+                port:
+                  number: 5800
     - host: scope-manager.k8s.next.governify.io
       http:
         paths:
@@ -46,14 +57,14 @@ spec:
                 name: governify-computer
                 port:
                   number: 5803
-    - host: collector.k8s.next.governify.io
+    - host: fetcher.k8s.next.governify.io
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: governify-collector
+                name: governify-fetcher
                 port:
                   number: 5804
     - host: reporter.k8s.next.governify.io

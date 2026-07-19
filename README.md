@@ -46,7 +46,7 @@ The checked-in configuration uses these hostnames:
 | Scope Manager | `https://scope-manager.k8s.next.governify.io` |
 | Registry | `https://registry.k8s.next.governify.io` |
 | Computer | `https://computer.k8s.next.governify.io` |
-| Collector | `https://collector.k8s.next.governify.io` |
+| Fetcher | `https://fetcher.k8s.next.governify.io` |
 | Reporter | `https://reporter.k8s.next.governify.io` |
 | Director | `https://director.k8s.next.governify.io` |
 | Join (backend) | `https://join-backend.k8s.next.governify.io` |

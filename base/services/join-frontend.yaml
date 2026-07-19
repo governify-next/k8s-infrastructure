@@ -15,8 +15,31 @@ spec:
       containers:
         - name: join-frontend
           image: governifynext/join-frontend:develop
+          imagePullPolicy: Always
           env:
+            - {name: NODE_ENV, value: production}
             - {name: PORT, value: "3000"}
+            - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
+            - {name: JOIN_BACKEND_URL, value: "http://governify-join-backend:5807"}
+            - {name: GOVERNIFY_FRONTEND_URL, value: "https://next.governify.io"}
+          ports:
+            - {name: http, containerPort: 3000}
+          startupProbe:
+            httpGet: {path: /api/health, port: http}
+            failureThreshold: 30
+            periodSeconds: 2
+          readinessProbe:
+            httpGet: {path: /api/health, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /api/health, port: http}
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 512Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
 ---
 apiVersion: v1
 kind: Service
@@ -26,4 +49,4 @@ spec:
   selector:
     app.kubernetes.io/name: governify-join-frontend
   ports:
-    - {port: 3000}
+    - {name: http, port: 3000, targetPort: http}

@@ -3,7 +3,9 @@ kind: Kustomization
 namespace: governify-next
 resources:
   - core.yaml
-  - services/collector.yaml
+  - infra
+  - services/authenticator.yaml
+  - services/fetcher.yaml
   - services/computer.yaml
   - services/director.yaml
   - services/registry.yaml
@@ -11,9 +13,4 @@ resources:
   - services/scope-manager.yaml
   - services/join-backend.yaml
   - services/join-frontend.yaml
-  - infra/mongo.yaml
-  - infra/redis.yaml
-  - infra/influxdb.yaml
-  - infra/grafana.yaml
-  - infra/headlamp.yaml
   - ingress.yaml

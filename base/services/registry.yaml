@@ -22,7 +22,7 @@ spec:
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - {name: SCOPE_MANAGER_SERVICE_URL, value: "http://governify-scope-manager:5801"}
             - {name: COMPUTER_SERVICE_URL, value: "http://governify-computer:5803"}
-            - {name: COLLECTOR_SERVICE_URL, value: "http://governify-collector:5804"}
+            - {name: FETCHER_SERVICE_URL, value: "http://governify-fetcher:5804"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
 ---

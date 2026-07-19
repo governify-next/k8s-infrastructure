@@ -11,8 +11,10 @@ spec:
   applicationRefs:
     - namePattern: governify-next
       images:
-        - alias: collector
-          imageName: governifynext/collector:develop
+        - alias: authenticator
+          imageName: governifynext/authenticator:develop
+        - alias: fetcher
+          imageName: governifynext/fetcher:develop
         - alias: computer
           imageName: governifynext/computer:develop
         - alias: director
