@@ -22,6 +22,10 @@ spec:
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
+            - name: GITHUB_APP_ID
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: github_app_id}}
+            - name: GITHUB_APP_PRIVATE_KEY
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: github_app_private_key}}
 ---
 apiVersion: v1
 kind: Service
