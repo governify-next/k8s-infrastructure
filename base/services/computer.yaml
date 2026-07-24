@@ -21,7 +21,7 @@ spec:
             - {name: GOV_SERVICE_NAME, value: computer}
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - {name: REDIS_URI, value: "redis://governify-redis:6379"}
-            - {name: FETCHER_SERVICE_URL, value: "http://governify-fetcher:5804"}
+            - {name: COLLECTOR_SERVICE_URL, value: "http://governify-fetcher:5804"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
             - {name: REDIS_ENABLED, value: "true"}
