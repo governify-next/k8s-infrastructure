@@ -20,6 +20,7 @@ spec:
           ports:
             - {name: http, containerPort: 5800}
           env:
+            - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
             - {name: PORT, value: "5800"}
             - {name: GOV_SERVICE_NAME, value: authenticator}
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
