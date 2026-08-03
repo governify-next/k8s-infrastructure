@@ -18,6 +18,8 @@ spec:
           env:
             - {name: SERVICE_AUTHENTICATION_ENABLED, value: "true"}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
+            - name: CLIENT_SECRET
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: director_client_secret}}
             - {name: PORT, value: "5806"}
             - {name: GOV_SERVICE_NAME, value: director}
             - {name: REGISTRY_SERVICE_URL, value: "http://governify-registry:5802"}
