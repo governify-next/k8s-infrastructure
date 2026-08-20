@@ -24,13 +24,17 @@ spec:
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - {name: FRONTEND_URL, value: "https://join.k8s.next.governify.io"}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
+            - {name: CLIENT_ID, value: join-backend}
             - name: CLIENT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: join_backend_client_secret}}
             - {name: SCOPE_MANAGER_SERVICE_URL, value: "http://governify-scope-manager:5801"}
             - {name: REGISTRY_SERVICE_URL, value: "http://governify-registry:5802"}
             - {name: DIRECTOR_SERVICE_URL, value: "http://governify-director:5806"}
             - {name: WORKER_LEASE_MS, value: "300000"}
+            - {name: WORKER_INTERVAL_MS, value: "2000"}
+            - {name: ONBOARDING_TTL_SECONDS, value: "86400"}
             - {name: GITHUB_APP_SLUG, value: governify-next}
+            - {name: GITHUB_API_URL, value: "https://api.github.com"}
             - {name: GITHUB_CALLBACK_URL, value: "https://join-backend.k8s.next.governify.io/api/v1/integrations/github/callback"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}

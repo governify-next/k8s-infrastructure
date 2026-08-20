@@ -16,6 +16,8 @@ spec:
           image: governifynext/reporter:develop
           env:
             - {name: SERVICE_AUTHENTICATION_ENABLED, value: "true"}
+            - {name: NODE_ENV, value: production}
+            - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
             - name: CLIENT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: reporter_client_secret}}
@@ -29,6 +31,14 @@ spec:
             - name: INFLUX_TOKEN
               valueFrom: {secretKeyRef: {name: governify-secrets, key: influx_token}}
             - {name: INFLUX_DATABASE, value: governify-next}
+            - {name: INFLUX_WRITE_PRECISION, value: millisecond}
+            - {name: INFLUX_MAX_FAST_RETRIES, value: "5"}
+            - {name: INFLUX_RETRY_FAST_DELAY_MS, value: "1000"}
+            - {name: INFLUX_SLOW_RECONNECTION_MAX_RETRIES, value: "10"}
+            - {name: INFLUX_SLOW_RECONNECTION_STRATEGY, value: "false"}
+            - {name: INFLUX_RETRY_SLOW_DELAY_MS, value: "10000"}
+            - {name: INFLUX_HEALTHCHECK_INTERVAL_MS, value: "10000"}
+            - {name: INFLUX_HEALTHCHECK_TIMEOUT_MS, value: "3000"}
             - {name: GRAFANA_URL, value: "http://governify-grafana:3000"}
             - {name: GRAFANA_PUBLIC_URL, value: "https://grafana.k8s.next.governify.io"}
             - name: GRAFANA_USER

@@ -17,17 +17,29 @@ spec:
           image: governifynext/computer:develop
           env:
             - {name: SERVICE_AUTHENTICATION_ENABLED, value: "true"}
+            - {name: NODE_ENV, value: production}
+            - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
+            - {name: CLIENT_ID, value: computer}
             - name: CLIENT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: computer_client_secret}}
             - {name: PORT, value: "5803"}
             - {name: GOV_SERVICE_NAME, value: computer}
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - {name: REDIS_URI, value: "redis://governify-redis:6379"}
-            - {name: COLLECTOR_SERVICE_URL, value: "http://governify-fetcher:5804"}
+            - {name: FETCHER_SERVICE_URL, value: "http://governify-fetcher:5804"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
+            - {name: JWT_ISSUER, value: authenticator}
+            - {name: JWT_AUDIENCE, value: governify-next}
             - {name: REDIS_ENABLED, value: "true"}
+            - {name: REDIS_MAX_RETRIES, value: "5"}
+            - {name: REDIS_RETRY_DELAY_MS, value: "2000"}
+            - {name: REDIS_SLOW_RECONNECTION_STRATEGY, value: "false"}
+            - {name: REDIS_SLOW_RECONNECTION_MAX_RETRIES, value: "10"}
+            - {name: REDIS_RETRY_SLOW_DELAY_MS, value: "10000"}
+            - {name: FETCH_RESULT_POLLING_MAX_ATTEMPTS, value: "300"}
+            - {name: FETCH_RESULT_POLLING_INTERVAL_MS, value: "1000"}
 ---
 apiVersion: v1
 kind: Service

@@ -17,7 +17,10 @@ spec:
           image: governifynext/registry:develop
           env:
             - {name: SERVICE_AUTHENTICATION_ENABLED, value: "true"}
+            - {name: NODE_ENV, value: production}
+            - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
+            - {name: CLIENT_ID, value: registry}
             - name: CLIENT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: registry_client_secret}}
             - {name: PORT, value: "5802"}
@@ -26,8 +29,11 @@ spec:
             - {name: SCOPE_MANAGER_SERVICE_URL, value: "http://governify-scope-manager:5801"}
             - {name: COMPUTER_SERVICE_URL, value: "http://governify-computer:5803"}
             - {name: FETCHER_SERVICE_URL, value: "http://governify-fetcher:5804"}
+            - {name: DIRECTOR_SERVICE_URL, value: "http://governify-director:5806"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
+            - {name: JWT_ISSUER, value: authenticator}
+            - {name: JWT_AUDIENCE, value: governify-next}
 ---
 apiVersion: v1
 kind: Service

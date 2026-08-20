@@ -23,6 +23,10 @@ spec:
             - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
             - {name: SCOPE_SERVICE_URL, value: "http://governify-scope-manager:5801"}
+            - {name: AUTH_ACCESS_COOKIE_NAME, value: governify_next_access_token}
+            - {name: AUTH_REFRESH_COOKIE_NAME, value: governify_next_refresh_token}
+            - {name: ACCESS_TOKEN_MAX_AGE, value: "900"}
+            - {name: REFRESH_TOKEN_MAX_AGE, value: "604800"}
           ports:
             - {name: http, containerPort: 3000}
           startupProbe:

@@ -22,6 +22,10 @@ spec:
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
             - {name: JOIN_BACKEND_URL, value: "http://governify-join-backend:5807"}
             - {name: GOVERNIFY_FRONTEND_URL, value: "https://k8s.next.governify.io"}
+            - {name: AUTH_ACCESS_COOKIE_NAME, value: governify_next_access_token}
+            - {name: AUTH_REFRESH_COOKIE_NAME, value: governify_next_refresh_token}
+            - {name: ACCESS_TOKEN_MAX_AGE, value: "900"}
+            - {name: REFRESH_TOKEN_MAX_AGE, value: "604800"}
           ports:
             - {name: http, containerPort: 3000}
           startupProbe:
