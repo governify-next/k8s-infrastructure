@@ -1,38 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: governify-join-frontend
+  name: governify-frontend
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: governify-join-frontend
+      app.kubernetes.io/name: governify-frontend
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: governify-join-frontend
+        app.kubernetes.io/name: governify-frontend
     spec:
       containers:
-        - name: join-frontend
-          image: governifynext/join-frontend:develop
+        - name: frontend
+          image: governifynext/frontend:develop
           imagePullPolicy: Always
           env:
             - {name: NODE_ENV, value: production}
             - {name: PORT, value: "3000"}
+            - {name: GOV_SERVICE_NAME, value: frontend}
+            - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
-            - {name: JOIN_BACKEND_URL, value: "http://governify-join-backend:5807"}
-            - {name: GOVERNIFY_FRONTEND_URL, value: "https://k8s.next.governify.io"}
+            - {name: SCOPE_SERVICE_URL, value: "http://governify-scope-manager:5801"}
           ports:
             - {name: http, containerPort: 3000}
           startupProbe:
-            httpGet: {path: /api/health, port: http}
+            httpGet: {path: /, port: http}
             failureThreshold: 30
             periodSeconds: 2
           readinessProbe:
-            httpGet: {path: /api/health, port: http}
+            httpGet: {path: /, port: http}
             periodSeconds: 10
           livenessProbe:
-            httpGet: {path: /api/health, port: http}
+            httpGet: {path: /, port: http}
             periodSeconds: 20
           resources:
             requests: {cpu: 50m, memory: 128Mi}
@@ -44,9 +45,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: governify-join-frontend
+  name: governify-frontend
 spec:
   selector:
-    app.kubernetes.io/name: governify-join-frontend
+    app.kubernetes.io/name: governify-frontend
   ports:
     - {name: http, port: 3000, targetPort: http}

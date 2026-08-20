@@ -43,6 +43,7 @@ The checked-in configuration uses these hostnames:
 
 | Service | Public URL |
 | --- | --- |
+| Frontend | `https://k8s.next.governify.io` |
 | Scope Manager | `https://scope-manager.k8s.next.governify.io` |
 | Registry | `https://registry.k8s.next.governify.io` |
 | Computer | `https://computer.k8s.next.governify.io` |
@@ -59,6 +60,7 @@ controller entrypoint. If using another domain, replace the host rules in
 `base/ingress.yaml` and update these related public URLs before deployment:
 
 - `OIDC_REDIRECT_URI` in `base/services/scope-manager.yaml`
+- `GOVERNIFY_FRONTEND_URL` in `base/services/join-frontend.yaml`
 - `GRAFANA_PUBLIC_URL` in `base/services/reporter.yaml`
 - `GF_SERVER_ROOT_URL` in `base/infra/grafana.yaml`
 
@@ -173,7 +175,7 @@ The checked-in Argo CD `Application` tracks the `develop` branch and uses
 Kubernetes cluster, change `spec.source.path` in `argocd/governify-next.yaml`
 to `platform/kubernetes` before applying it.
 
-The checked-in `ImageUpdater` tracks the eight Governify service images that use
+The checked-in `ImageUpdater` tracks the ten Governify service images that use
 the `develop` tag. It uses the `digest` strategy so a new image pushed to the
 same mutable tag causes Argo CD to deploy the new image digest without requiring
 manual Kubernetes YAML edits for each commit.

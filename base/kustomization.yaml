@@ -13,4 +13,5 @@ resources:
   - services/scope-manager.yaml
   - services/join-backend.yaml
   - services/join-frontend.yaml
+  - services/frontend.yaml
   - ingress.yaml

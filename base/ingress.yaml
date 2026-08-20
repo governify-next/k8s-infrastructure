@@ -5,6 +5,7 @@ metadata:
 spec:
   tls:
     - hosts:
+        - k8s.next.governify.io
         - authenticator.k8s.next.governify.io
         - scope-manager.k8s.next.governify.io
         - registry.k8s.next.governify.io
@@ -17,6 +18,16 @@ spec:
         - grafana.k8s.next.governify.io
         - headlamp.k8s.next.governify.io
   rules:
+    - host: k8s.next.governify.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: governify-frontend
+                port:
+                  number: 3000
     - host: authenticator.k8s.next.governify.io
       http:
         paths:
