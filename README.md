@@ -43,7 +43,7 @@ The checked-in configuration uses these hostnames:
 
 | Service | Public URL |
 | --- | --- |
-| Frontend | `https://k8s.next.governify.io` |
+| Frontend | `https://frontend.k8s.next.governify.io` |
 | Scope Manager | `https://scope-manager.k8s.next.governify.io` |
 | Registry | `https://registry.k8s.next.governify.io` |
 | Computer | `https://computer.k8s.next.governify.io` |
