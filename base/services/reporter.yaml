@@ -32,6 +32,8 @@ spec:
               valueFrom: {secretKeyRef: {name: governify-secrets, key: influx_token}}
             - {name: INFLUX_DATABASE, value: governify-next}
             - {name: INFLUX_WRITE_PRECISION, value: millisecond}
+            - {name: INFLUX_WRITE_BATCH_MAX_POINTS, value: "5000"}
+            - {name: INFLUX_WRITE_BATCH_MAX_BYTES, value: "8388608"}
             - {name: INFLUX_MAX_FAST_RETRIES, value: "5"}
             - {name: INFLUX_RETRY_FAST_DELAY_MS, value: "1000"}
             - {name: INFLUX_SLOW_RECONNECTION_MAX_RETRIES, value: "10"}
