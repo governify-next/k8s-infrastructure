@@ -29,6 +29,7 @@ spec:
               valueFrom: {secretKeyRef: {name: governify-secrets, key: join_backend_client_secret}}
             - {name: SCOPE_MANAGER_SERVICE_URL, value: "http://governify-scope-manager:5801"}
             - {name: REGISTRY_SERVICE_URL, value: "http://governify-registry:5802"}
+            - {name: REPORTER_SERVICE_URL, value: "http://governify-reporter:5805"}
             - {name: DIRECTOR_SERVICE_URL, value: "http://governify-director:5806"}
             - {name: WORKER_LEASE_MS, value: "300000"}
             - {name: WORKER_INTERVAL_MS, value: "2000"}
