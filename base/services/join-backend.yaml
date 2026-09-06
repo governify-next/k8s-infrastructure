@@ -23,6 +23,7 @@ spec:
             - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - {name: FRONTEND_URL, value: "https://join.k8s.next.governify.io"}
+            - {name: GOVERNIFY_FRONTEND_URL, value: "https://frontend.k8s.next.governify.io"}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
             - {name: CLIENT_ID, value: join-backend}
             - name: CLIENT_SECRET
