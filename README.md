@@ -1,7 +1,9 @@
 # Governify Next on Kubernetes
 
 This repository deploys the Governify Next services, MongoDB, Redis,
-InfluxDB 3, and Grafana to Kubernetes. The default deployment target is a k3s
+InfluxDB 3, and Grafana to Kubernetes. Grafana uses the Reporter-owned image
+`governifynext/reporter-grafana`, which includes the Governify compliance ranking
+panel plugin and is built by Reporter's GitHub Actions workflows. The default deployment target is a k3s
 cluster with the bundled Traefik ingress controller enabled, but the manifests
 also include a standard Kubernetes overlay that uses native `Ingress`.
 
@@ -175,8 +177,8 @@ The checked-in Argo CD `Application` tracks the `develop` branch and uses
 Kubernetes cluster, change `spec.source.path` in `argocd/governify-next.yaml`
 to `platform/kubernetes` before applying it.
 
-The checked-in `ImageUpdater` tracks the ten Governify service images that use
-the `develop` tag. It uses the `digest` strategy so a new image pushed to the
+The checked-in `ImageUpdater` tracks the ten Governify service images and the
+Reporter-owned Grafana image, all using the `develop` tag. It uses the `digest` strategy so a new image pushed to the
 same mutable tag causes Argo CD to deploy the new image digest without requiring
 manual Kubernetes YAML edits for each commit.
 

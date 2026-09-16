@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: grafana
-          image: grafana/grafana:12.3.0
+          image: governifynext/reporter-grafana:develop
           env:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom: {secretKeyRef: {name: governify-secrets, key: grafana_user}}
