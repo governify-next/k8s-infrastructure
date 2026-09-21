@@ -27,6 +27,8 @@ spec:
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
+            - {name: JWT_ISSUER, value: authenticator}
+            - {name: JWT_AUDIENCE, value: governify-next}
             - {name: INFLUX_URL, value: "http://governify-influxdb3:8181"}
             - name: INFLUX_TOKEN
               valueFrom: {secretKeyRef: {name: governify-secrets, key: influx_token}}
