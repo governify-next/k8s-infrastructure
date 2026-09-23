@@ -31,14 +31,6 @@ spec:
             - {name: JWT_AUDIENCE, value: governify-next}
             - {name: MAX_ROLES_PER_ORGANIZATION, value: "100"}
             - {name: MAX_MEMBERS_PER_ORGANIZATION, value: "1000"}
-            - {name: OIDC_ENABLED, value: "true"}
-            - {name: OIDC_ISSUER_URL, value: "https://accounts.google.com"}
-            - name: OIDC_CLIENT_ID
-              valueFrom: {secretKeyRef: {name: governify-secrets, key: oidc_client_id}}
-            - name: OIDC_CLIENT_SECRET
-              valueFrom: {secretKeyRef: {name: governify-secrets, key: oidc_client_secret}}
-            - {name: OIDC_REDIRECT_URI, value: "https://scope-manager.k8s.next.governify.io/api/v1/users/oidc/callback"}
-            - {name: OIDC_SCOPE, value: "openid email profile"}
 ---
 apiVersion: v1
 kind: Service

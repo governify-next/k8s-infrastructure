@@ -25,6 +25,8 @@ spec:
             - {name: PORT, value: "5805"}
             - {name: GOV_SERVICE_NAME, value: reporter}
             - {name: REGISTRY_SERVICE_URL, value: "http://governify-registry:5802"}
+            - {name: SCOPE_MANAGER_SERVICE_URL, value: "http://governify-scope-manager:5801"}
+            - {name: DIRECTOR_SERVICE_URL, value: "http://governify-director:5806"}
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
             - name: JWT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: jwt_secret}}
