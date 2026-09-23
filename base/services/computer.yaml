@@ -40,6 +40,25 @@ spec:
             - {name: REDIS_RETRY_SLOW_DELAY_MS, value: "10000"}
             - {name: FETCH_RESULT_POLLING_MAX_ATTEMPTS, value: "300"}
             - {name: FETCH_RESULT_POLLING_INTERVAL_MS, value: "1000"}
+            # OAS telemetry: each service can override its own exporters and retention.
+            - {name: OTEL_SERVICE_NAME, value: computer}
+            - {name: OTEL_RESOURCE_ATTRIBUTES, value: "service.namespace=governify-next"}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: telemetry_otel_exporter_otlp_endpoint}}
+            - {name: OASTLM_CONFIG_GENERAL_SPEC_FILE_NAME, value: "./src/docs/swagger.yaml"}
+            - {name: OASTLM_CONFIG_TRACES_CAPTURE_BODY_MODE, value: onMismatchOrError}
+            - {name: OASTLM_CONFIG_METRICS_RECORD_SCHEMA_COMPLIANCE, value: "true"}
+            - {name: OASTLM_CONFIG_AUTH_ENABLED, value: "true"}
+            - name: OASTLM_CONFIG_AUTH_PASSWORD
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: telemetry_oastlm_config_auth_password}}
+            - name: OASTLM_CONFIG_AUTH_JWT_SECRET
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: telemetry_oastlm_config_auth_jwt_secret}}
+            - {name: OASTLM_CONFIG_TRACES_MEMORY_EXPORTER_RETENTION_TIME_SECONDS, value: "36000"}
+            - {name: OASTLM_CONFIG_METRICS_MAIN_READER_EXPORT_INTERVAL, value: "60000"}
+            - {name: OASTLM_CONFIG_METRICS_MEMORY_EXPORTER_RETENTION_TIME_SECONDS, value: "172800"}
+            - {name: OASTLM_CONFIG_LOGS_MEMORY_EXPORTER_RETENTION_TIME_SECONDS, value: "86400"}
+            - name: OASTLM_CONFIG_AI_OPENAI_KEY
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: telemetry_oastlm_config_ai_openai_key}}
 ---
 apiVersion: v1
 kind: Service
