@@ -49,7 +49,7 @@ spec:
             - {name: OASTLM_CONFIG_METRICS_MEMORY_EXPORTER_RETENTION_TIME_SECONDS, value: "172800"}
             - {name: OASTLM_CONFIG_LOGS_MEMORY_EXPORTER_RETENTION_TIME_SECONDS, value: "86400"}
             - name: OASTLM_CONFIG_AI_OPENAI_KEY
-              valueFrom: {secretKeyRef: {name: governify-secrets, key: OASTLM_CONFIG_AI_OPENAI_KEY}}
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: telemetry_oastlm_config_ai_openai_key}}
 ---
 apiVersion: v1
 kind: Service
