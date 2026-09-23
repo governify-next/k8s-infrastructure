@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: governify-reporter
 spec:
+  replicas: 2
   selector:
     matchLabels: 
       app.kubernetes.io/name: governify-reporter
