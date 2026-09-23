@@ -29,6 +29,8 @@ cluster has a default `StorageClass` or patch the PVCs for your storage class.
 The images currently use the `develop` tag. Pin image tags in `base/services/` to
 an immutable release before a production deployment.
 
+Join Backend sets `RESTRICT_ONBOARDING_PER_REPOSITORY=false` here so development allows repeated publication of the same repository. The separate `production-deployment` repository enables this restriction for the main deployment.
+
 ## 1. Create a k3s cluster
 
 Before installing, review the [k3s operating-system requirements](https://docs.k3s.io/installation/requirements).

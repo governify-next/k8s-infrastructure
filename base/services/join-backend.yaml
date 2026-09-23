@@ -35,6 +35,7 @@ spec:
             - {name: WORKER_LEASE_MS, value: "300000"}
             - {name: WORKER_INTERVAL_MS, value: "2000"}
             - {name: ONBOARDING_TTL_SECONDS, value: "86400"}
+            - {name: RESTRICT_ONBOARDING_PER_REPOSITORY, value: "false"}
             - {name: GITHUB_APP_SLUG, value: governify-next}
             - {name: GITHUB_API_URL, value: "https://api.github.com"}
             - {name: GITHUB_CALLBACK_URL, value: "https://join-backend.k8s.next.governify.io/api/v1/integrations/github/callback"}
