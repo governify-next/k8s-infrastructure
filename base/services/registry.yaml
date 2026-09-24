@@ -36,7 +36,7 @@ spec:
             - {name: JWT_AUDIENCE, value: governify-next}
             # OAS telemetry: each service can override its own exporters and retention.
             - {name: OTEL_SERVICE_NAME, value: registry}
-            - {name: OTEL_RESOURCE_ATTRIBUTES, value: "service.namespace=governify-next"}
+            - {name: OTEL_RESOURCE_ATTRIBUTES, value: "service.namespace=governify-next-pre-production"}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               valueFrom: {secretKeyRef: {name: governify-secrets, key: telemetry_otel_exporter_otlp_endpoint}}
             - {name: OASTLM_CONFIG_GENERAL_SPEC_FILE_NAME, value: "./src/docs/swagger.yaml"}
