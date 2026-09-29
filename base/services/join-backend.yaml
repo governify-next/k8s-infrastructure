@@ -68,6 +68,25 @@ spec:
             - {name: OASTLM_CONFIG_LOGS_MEMORY_EXPORTER_RETENTION_TIME_SECONDS, value: "86400"}
             - name: OASTLM_CONFIG_AI_OPENAI_KEY
               valueFrom: {secretKeyRef: {name: governify-secrets, key: telemetry_oastlm_config_ai_openai_key}}
+            # Add these keys to governify-secrets to enable Bluejay publication.
+            - name: LEGACY_SCOPE_URL
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_scope_url, optional: true}}
+            - name: LEGACY_SCOPE_AUTH_TOKEN
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_scope_auth_token, optional: true}}
+            - name: LEGACY_REGISTRY_URL
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_registry_url, optional: true}}
+            - name: LEGACY_DIRECTOR_URL
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_director_url, optional: true}}
+            - name: LEGACY_INTERNAL_ASSETS_URL
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_internal_assets_url, optional: true}}
+            - name: LEGACY_INTERNAL_SCOPE_URL
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_internal_scope_url, optional: true}}
+            - name: LEGACY_RENDER_URL
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_render_url, optional: true}}
+            - name: LEGACY_COURSE_ID
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_course_id, optional: true}}
+            - name: LEGACY_TPA_TEMPLATE_ID
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: legacy_tpa_template_id, optional: true}}
           ports:
             - {name: http, containerPort: 5807}
           startupProbe:
