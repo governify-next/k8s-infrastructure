@@ -19,6 +19,8 @@ spec:
           env:
             - {name: NODE_ENV, value: production}
             - {name: PORT, value: "3000"}
+            - name: FRONTEND_APP_NAME
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: frontend_app_name, optional: true}}
             - {name: GOV_SERVICE_NAME, value: frontend}
             - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}

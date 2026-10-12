@@ -19,6 +19,8 @@ spec:
           env:
             - {name: NODE_ENV, value: production}
             - {name: PORT, value: "3000"}
+            - name: FRONTEND_APP_NAME
+              valueFrom: {secretKeyRef: {name: governify-secrets, key: frontend_app_name, optional: true}}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
             - {name: JOIN_BACKEND_URL, value: "http://governify-join-backend:5807"}
             - {name: GOVERNIFY_FRONTEND_URL, value: "https://frontend.k8s.next.governify.io"}
