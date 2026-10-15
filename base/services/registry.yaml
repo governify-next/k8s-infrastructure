@@ -26,6 +26,9 @@ spec:
             - {name: PORT, value: "5802"}
             - {name: GOV_SERVICE_NAME, value: registry}
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
+            - {name: STATE_EVENTS_PUBLISH_ENABLED, value: "true"}
+            - {name: KAFKA_BOOTSTRAP_SERVERS, value: "governify-kafka-bootstrap:9092"}
+            - {name: STATE_EVENTS_TOPIC, value: "governify.states.v1"}
             - {name: SCOPE_MANAGER_SERVICE_URL, value: "http://governify-scope-manager:5801"}
             - {name: COMPUTER_SERVICE_URL, value: "http://governify-computer:5803"}
             - {name: FETCHER_SERVICE_URL, value: "http://governify-fetcher:5804"}

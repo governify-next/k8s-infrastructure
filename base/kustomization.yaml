@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: governify-next
 resources:
   - core.yaml
+  - strimzi
   - infra
   - services/authenticator.yaml
   - services/fetcher.yaml

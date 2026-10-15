@@ -1,6 +1,6 @@
 # Governify Next on Kubernetes
 
-This repository deploys the Governify Next services, MongoDB, Redis,
+This repository deploys the Governify Next services, MongoDB, Redis, Kafka,
 InfluxDB 3, and Grafana to Kubernetes. Grafana uses the Reporter-owned image
 `governifynext/reporter-grafana`, which includes the Governify compliance ranking
 panel plugin and is built by Reporter's GitHub Actions workflows. The default deployment target is a k3s
@@ -14,7 +14,8 @@ cluster has a default `StorageClass` or patch the PVCs for your storage class.
 ## What you need
 
 - A Linux server, k3s cluster, or Kubernetes cluster with Internet access and
-  enough persistent storage for 85 GiB of persistent-volume requests.
+  enough persistent storage for 135 GiB of persistent-volume requests,
+  including the 50 GiB Kafka claim created by Strimzi.
 - A public IP address and DNS records for the service hostnames.
 - For k3s: the bundled Traefik ingress controller enabled. Let’s Encrypt must
   be able to reach the cluster on TCP 443; HTTP traffic on TCP 80 is redirected
@@ -23,6 +24,7 @@ cluster has a default `StorageClass` or patch the PVCs for your storage class.
   or an equivalent certificate-management setup, for the configured hostnames.
 - `kubectl` configured to access the cluster. The commands below assume it is
   run by a cluster administrator.
+- Kubernetes 1.32–1.37, the versions tested with Strimzi 1.3.0.
 - Credentials for the Google OpenID Connect application used by Scope Manager.
   Its redirect URI must match the configured public hostname.
 
@@ -30,6 +32,31 @@ The images currently use the `develop` tag. Pin image tags in `base/services/` t
 an immutable release before a production deployment.
 
 Join Backend sets `RESTRICT_ONBOARDING_PER_REPOSITORY=false` here so development allows repeated publication of the same repository. The separate `production-deployment` repository enables this restriction for the main deployment.
+
+## State event broker
+
+[Strimzi 1.3.0](base/strimzi/kustomization.yaml) manages a single Kafka broker
+with a 50 GiB persistent volume. Registry connects to
+`governify-kafka-bootstrap:9092` and publishes to `governify.states.v1`.
+Events are retained indefinitely; expand storage before the volume fills.
+
+Argo CD installs Strimzi and Kafka automatically. For direct `kubectl`
+deployments, bootstrap the operator before applying either overlay:
+
+```sh
+kubectl apply -f base/core.yaml
+kubectl apply -k base/strimzi
+kubectl wait --for=condition=Established --timeout=120s \
+  crd/kafkas.kafka.strimzi.io \
+  crd/kafkanodepools.kafka.strimzi.io \
+  crd/kafkatopics.kafka.strimzi.io
+```
+
+Check the deployed Kafka resources and storage:
+
+```sh
+kubectl -n governify-next get kafka,kafkanodepool,kafkatopic,pvc
+```
 
 ## 1. Create a k3s cluster
 
@@ -159,12 +186,12 @@ installation watches its own namespace, which is where the `Application` and
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/config/install.yaml
 ```
 
-Create the runtime secrets before the first sync. This keeps secret material out
-of Git while still allowing Argo CD to manage the rest of the deployment.
-For this you will previously need to create the corresponding namespace.
+Create the runtime secrets before the first sync. This keeps secret material
+out of Git while allowing Argo CD to install Strimzi and manage the rest of the
+deployment automatically.
 
 ```sh
-kubectl create namespace governify-next
+kubectl apply -f base/core.yaml
 kubectl apply -f secrets.yaml
 ```
 
@@ -174,7 +201,7 @@ Then apply the Argo CD bootstrap resources from this repository:
 kubectl apply -k argocd
 ```
 
-The checked-in Argo CD `Application` tracks the `develop` branch and uses
+The checked-in Argo CD `Application` tracks the `main` branch and uses
 `path: .`, so the default deployment is the k3s overlay. For a standard
 Kubernetes cluster, change `spec.source.path` in `argocd/governify-next.yaml`
 to `platform/kubernetes` before applying it.

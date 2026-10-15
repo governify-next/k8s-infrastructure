@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - mongo.yaml
   - redis.yaml
+  - kafka.yaml
   - influxdb.yaml
   - grafana.yaml
   - headlamp.yaml

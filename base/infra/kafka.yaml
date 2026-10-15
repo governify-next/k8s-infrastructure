@@ -1,0 +1,48 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
+metadata:
+  name: dual-role
+  labels:
+    strimzi.io/cluster: governify
+spec:
+  # One node serves as both Kafka controller and broker.
+  replicas: 1
+  roles:
+    - controller
+    - broker
+  storage:
+    type: persistent-claim
+    size: 50Gi
+    # deleteClaim defaults to false, preserving the PVC on deletion.
+---
+apiVersion: kafka.strimzi.io/v1
+kind: Kafka
+metadata:
+  name: governify
+spec:
+  kafka:
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+    config:
+      # Kafka's internal topics must fit the single broker.
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+  entityOperator:
+    topicOperator: {}
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: governify.states.v1
+  labels:
+    strimzi.io/cluster: governify
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  config:
+    # Retain events indefinitely; retention.bytes is unlimited by default.
+    retention.ms: -1
