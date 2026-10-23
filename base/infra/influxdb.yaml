@@ -15,6 +15,9 @@ spec:
       containers:
         - name: influxdb3
           image: influxdb:3.9-core
+          env:
+            - name: INFLUXDB3_QUERY_FILE_LIMIT
+              value: "16384"
           args:
             - influxdb3
             - serve

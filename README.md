@@ -11,6 +11,31 @@ The default k3s path uses k3s's `local-path` storage, which is best suited for
 a single-node installation. For a standard Kubernetes cluster, make sure the
 cluster has a default `StorageClass` or patch the PVCs for your storage class.
 
+## InfluxDB historical queries
+
+The InfluxDB deployment sets `INFLUXDB3_QUERY_FILE_LIMIT=16384`. This finite guard
+allows a larger Parquet file scan without changing dashboards, SQL queries,
+authentication, the database volume or its image. It is not a retention setting.
+It passed an isolated 98-day / 14,112-file / 423,360-state fixture, not an unlimited
+production capacity test. The separately tested `65536` annual-query setting is
+experimental and is not enabled here; Grafana 13.0.1 still has its independent
+FlightSQL row ceiling. See [issue #3](https://github.com/governify-next/ai-toolkit/issues/3).
+
+Render the selected overlay locally and pass its representative load checks
+before promotion. Inspect the effective environment/resources and arrange data
+protection and a maintenance window before deployment. Changing the environment
+recreates the one-replica InfluxDB Deployment (`Recreate`); verify writer retries,
+ingestion continuity, unchanged counts and Grafana afterward. Do not delete PVCs,
+reset data, change retention or activate a license as part of this configuration.
+
+The checked-in Argo CD Application follows `main` with automated sync, prune and
+selfHeal. Confirm its effective server state before integrating: a merge may
+trigger deployment immediately. Reads, deployment, verification, retries and
+recovery each need their specific operational authorization. Roll back through
+the authoritative repository while preserving the PVC; restoring the old file
+limit may restore the original historical-query failure. Production uses its own
+`production-deployment` overlay and pinned base, not this root directly.
+
 ## What you need
 
 - A Linux server, k3s cluster, or Kubernetes cluster with Internet access and
