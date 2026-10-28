@@ -19,6 +19,7 @@ spec:
             - {name: NODE_ENV, value: production}
             - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: AUTHENTICATOR_SERVICE_URL, value: "http://governify-authenticator:5800"}
+            - {name: REGISTRY_SERVICE_URL, value: "http://governify-registry:5802"}
             - {name: CLIENT_ID, value: scope-manager}
             - name: CLIENT_SECRET
               valueFrom: {secretKeyRef: {name: governify-secrets, key: scope_manager_client_secret}}
