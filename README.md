@@ -40,17 +40,42 @@ with a 50 GiB persistent volume. Registry connects to
 `governify-kafka-bootstrap:9092` and publishes to `governify.states.v1`.
 Events are retained indefinitely; expand storage before the volume fills.
 
-Argo CD installs Strimzi and Kafka automatically. For direct `kubectl`
-deployments, bootstrap the operator before applying either overlay:
+The two installations share only Strimzi CRDs. Each application keeps its own
+operator, broker and storage. Argo CD manages the CRDs through the separate
+`strimzi-crds` Application, pinned directly to upstream Strimzi 1.3.0. Neither
+environment Application owns those definitions; CRD pruning/deletion is disabled.
+
+For Argo CD, install the shared definitions once per cluster and wait for them
+before applying the existing application resources:
 
 ```sh
-kubectl apply -f base/core.yaml
-kubectl apply -k base/strimzi
+kubectl apply -f argocd/strimzi-crds.yaml
+```
+
+For direct `kubectl` deployments, install the CRDs and operator before applying
+either overlay:
+
+```sh
+kubectl apply --server-side -k crds/strimzi
 kubectl wait --for=condition=Established --timeout=120s \
   crd/kafkas.kafka.strimzi.io \
   crd/kafkanodepools.kafka.strimzi.io \
   crd/kafkatopics.kafka.strimzi.io
+kubectl apply -f base/core.yaml
+kubectl apply -k base/strimzi
+kubectl -n governify-next rollout status deployment/strimzi-cluster-operator
 ```
+
+This ownership migration leaves Kafka's broker sizing, JVM settings, listeners,
+network access and retention unchanged. Each installation retains its own broker
+and PVC; sharing CRDs does not share Kafka data.
+
+When upgrading an existing Argo installation, first disable its automatic sync,
+protect the live CRDs with `Prune=false,Delete=false`, and detach only their old
+Argo tracking annotation/instance label. Apply the new CRD Application and verify
+its ownership before syncing the updated environment, which no longer contains
+CRDs. Do not delete CRDs, Kafka resources or PVCs during this handoff. Other
+operators must use compatible CRDs and watch disjoint namespaces.
 
 Check the deployed Kafka resources and storage:
 
@@ -134,6 +159,7 @@ Important details:
 
 ## 4. Deploy to k3s
 
+Install the CRDs and operator as described above first.
 Run these commands from the repository root after DNS is in place. Creating the
 namespace first lets the Secret be applied before workloads are created. The
 Traefik configuration enables HTTPS redirects, ACME TLS certificates, and
@@ -152,6 +178,7 @@ The repository root points to the k3s overlay by default.
 Use this path for clusters that provide a standard ingress controller instead
 of k3s's bundled Traefik installation.
 
+Install the CRDs and operator as described above first.
 Before applying the overlay, either create a TLS secret named
 `governify-next-tls` in the `governify-next` namespace or adapt
 `platform/kubernetes/ingress-patch.yaml` to your certificate manager. If your
@@ -195,7 +222,8 @@ kubectl apply -f base/core.yaml
 kubectl apply -f secrets.yaml
 ```
 
-Then apply the Argo CD bootstrap resources from this repository:
+Install `argocd/strimzi-crds.yaml` once per cluster and wait for the three CRDs
+listed above to be Established. Then apply the existing Argo CD resources:
 
 ```sh
 kubectl apply -k argocd
