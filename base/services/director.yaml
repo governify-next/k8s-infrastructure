@@ -36,8 +36,6 @@ spec:
             - {name: JWT_AUDIENCE, value: governify-next}
             - {name: WORKER_CONCURRENCY, value: "1"}
             - {name: QUEUE_CLEANUP_INTERVAL, value: "0"}
-            - {name: FETCH_RESULT_POLLING_MAX_ATTEMPTS, value: "10"}
-            - {name: FETCH_RESULT_POLLING_INTERVAL_MS, value: "5000"}
             # OAS telemetry: each service can override its own exporters and retention.
             - {name: OTEL_SERVICE_NAME, value: director}
             - name: OTEL_RESOURCE_ATTRIBUTES
