@@ -11,6 +11,7 @@ resources:
   - services/director.yaml
   - services/registry.yaml
   - services/reporter.yaml
+  - services/influx-reporter.yaml
   - services/scope-manager.yaml
   - services/join-backend.yaml
   - services/join-frontend.yaml
