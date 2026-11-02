@@ -34,7 +34,6 @@ spec:
             - {name: GOV_LOG_LEVEL, value: INFO}
             - {name: GOV_SERVICE_NAME, value: influx-reporter}
             - {name: PORT, value: "5808"}
-            - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify-influx-reporter"}
             - {name: KAFKA_BOOTSTRAP_SERVERS, value: "governify-kafka-bootstrap:9092"}
             - {name: KAFKA_CLIENT_ID, value: governify-influx-reporter}
             - {name: KAFKA_CONSUMER_GROUP_ID, value: governify-influx-reporter}
