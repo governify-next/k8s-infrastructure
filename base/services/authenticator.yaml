@@ -26,6 +26,7 @@ spec:
             - {name: PORT, value: "5800"}
             - {name: GOV_SERVICE_NAME, value: authenticator}
             - {name: MONGO_URI, value: "mongodb://governify-mongo:27017/governify"}
+            - {name: BOOTSTRAP_OVERWRITE_EXISTING, value: "false"}
             - {name: DEFAULT_SUPERADMIN_USERNAME, value: admin}
             - name: DEFAULT_SUPERADMIN_PASSWORD
               valueFrom: {secretKeyRef: {name: governify-secrets, key: authenticator_admin_password}}
