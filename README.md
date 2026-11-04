@@ -40,16 +40,18 @@ with a 50 GiB persistent volume. Registry connects to
 `governify-kafka-bootstrap:9092` and publishes to `governify.states.v1`.
 Events are retained indefinitely; expand storage before the volume fills.
 
-Argo CD installs Strimzi and Kafka automatically. For direct `kubectl`
-deployments, bootstrap the operator before applying either overlay:
+Argo CD manages shared CRDs through `argocd/strimzi-crds.yaml`; each installation
+has its own operator, RBAC, broker and storage. For direct `kubectl` deployments,
+install the CRDs and operator before applying either overlay:
 
 ```sh
-kubectl apply -f base/core.yaml
-kubectl apply -k base/strimzi
+kubectl apply --server-side -k crds/strimzi
 kubectl wait --for=condition=Established --timeout=120s \
   crd/kafkas.kafka.strimzi.io \
   crd/kafkanodepools.kafka.strimzi.io \
   crd/kafkatopics.kafka.strimzi.io
+kubectl apply -f base/core.yaml
+kubectl apply -k base/strimzi
 ```
 
 Check the deployed Kafka resources and storage:
@@ -195,7 +197,8 @@ kubectl apply -f base/core.yaml
 kubectl apply -f secrets.yaml
 ```
 
-Then apply the Argo CD bootstrap resources from this repository:
+Apply `argocd/strimzi-crds.yaml` once per cluster and wait for the CRDs listed
+above to be Established. Then apply the Argo CD bootstrap resources:
 
 ```sh
 kubectl apply -k argocd
